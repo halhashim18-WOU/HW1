@@ -14,7 +14,6 @@ Local When2meet like app to quickly determine meeting times
 - Parsing the String to extract day/time data
 - Creating a table that displays days Monday Through Sunday.
 - Using 12-hour time format
-- From 12am to 12pm
 - When clicked it gets highlighted green/red (indicate availablity) (maybe send this as a question as it was unclear)
 
 
