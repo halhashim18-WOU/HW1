@@ -5,13 +5,14 @@ namespace HW1.Web.Pages;
 
 public class IndexModel : PageModel
 {
-    // Recieves the string from the form and stores it in BusyTimes property
+    // Receieves the string from the form and stores it in BusyTimes property
     [BindProperty]
     public string BusyTimes { get; set; } = string.Empty;
 
     // Checks if the user wants to include weekends in the calculation    
     [BindProperty]
-    public bool IncludeWeekends { get; private set; }
+    public bool IncludeWeekends { get; set; } 
+    // Changed to public as it allows dotnet to bind the correct checkbox value to this
 
     // Checks if the form was submitted
     public bool WasSubmitted { get; private set; }
