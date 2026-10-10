@@ -20,4 +20,32 @@ public class BusyTimeParserTests
         Assert.Equal(new TimeOnly(9, 0), range.StartTime);
         Assert.Equal(new TimeOnly(11, 0), range.EndTime);
     }
+
+    [Fact]
+    public void Parse_MultipleRanges_ReturnsAllRanges()
+    {
+        // Arrange
+        const string input =
+            "Monday 9:00 AM - 11:00 AM; Wednesday 2:00 PM - 4:00 PM";
+
+        // Act
+        var ranges = BusyTimeParser.Parse(input);
+
+        // Assert
+        Assert.Collection(
+            ranges,
+            first =>
+            {
+                Assert.Equal(DayOfWeek.Monday, first.Day);
+                Assert.Equal(new TimeOnly(9, 0), first.StartTime);
+                Assert.Equal(new TimeOnly(11, 0), first.EndTime);
+            },
+            second =>
+            {
+                Assert.Equal(DayOfWeek.Wednesday, second.Day);
+                Assert.Equal(new TimeOnly(14, 0), second.StartTime);
+                Assert.Equal(new TimeOnly(16, 0), second.EndTime);
+            }
+        );
+    }
 }
