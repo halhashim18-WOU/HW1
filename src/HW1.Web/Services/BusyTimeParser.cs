@@ -5,8 +5,8 @@ namespace HW1.Web.Services;
 
 public static class BusyTimeParser
 {
-    // Converts one busy-time string into a BusyTimeRange.
-    // format: Monday 9:00 AM - 11:00 AM
+    // Converts busy-time strings into BusyTimeRanges.
+    // format: Monday 9:00 AM - 11:00 AM; Wednesday 2:00 PM - 4:00 PM
     public static IReadOnlyList<BusyTimeRange> Parse(string input)
     {
         if (string.IsNullOrWhiteSpace(input))
@@ -14,6 +14,28 @@ public static class BusyTimeParser
             throw new FormatException("A busy-time range is required.");
         }
 
+        // Separate each busy-time range at the semicolons.
+        var rangeTexts = input.Split(
+            ';',
+            StringSplitOptions.RemoveEmptyEntries |
+            StringSplitOptions.TrimEntries
+        );
+
+        // Store all the parsed busy-time ranges.
+        var ranges = new List<BusyTimeRange>();
+
+        foreach (var rangeText in rangeTexts)
+        {
+            ranges.Add(ParseRange(rangeText));
+        }
+
+        return ranges;
+    }
+
+    // Converts one busy-time string into a BusyTimeRange.
+    // format: Monday 9:00 AM - 11:00 AM
+    private static BusyTimeRange ParseRange(string input)
+    {
         // Find the first space separating the day from the times.
         var firstSpace = input.IndexOf(' ');
 
@@ -72,11 +94,6 @@ public static class BusyTimeParser
             throw new FormatException("The ending time is invalid.");
         }
 
-        // Return a collection because later the parser will support
-        // multiple semicolon-separated ranges.
-        return
-        [
-            new BusyTimeRange(day, startTime, endTime)
-        ];
+        return new BusyTimeRange(day, startTime, endTime);
     }
 }
