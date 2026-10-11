@@ -48,4 +48,16 @@ public class BusyTimeParserTests
             }
         );
     }
+    [Fact]
+    public void Parse_EmptyInput_ReturnsNoRanges()
+    {
+            // Arrange
+            const string input = "";
+
+            // Act
+            var ranges = BusyTimeParser.Parse(input);
+
+            // Assert
+            Assert.Empty(ranges);
+    }
 }
