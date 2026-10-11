@@ -9,9 +9,11 @@ public static class BusyTimeParser
     // format: Monday 9:00 AM - 11:00 AM; Wednesday 2:00 PM - 4:00 PM
     public static IReadOnlyList<BusyTimeRange> Parse(string input)
     {
+        // Empty input basically means no busy times
         if (string.IsNullOrWhiteSpace(input))
         {
-            throw new FormatException("A busy-time range is required.");
+            // throw new FormatException("A busy-time range is required.");
+            return [];
         }
 
         // Separate each busy-time range at the semicolons.
