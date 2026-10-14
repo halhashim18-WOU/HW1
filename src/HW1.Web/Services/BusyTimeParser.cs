@@ -9,10 +9,9 @@ public static class BusyTimeParser
     // format: Monday 9:00 AM - 11:00 AM; Wednesday 2:00 PM - 4:00 PM
     public static IReadOnlyList<BusyTimeRange> Parse(string input)
     {
-        // Empty input basically means no busy times
+        // Empty input basically means no busy times.
         if (string.IsNullOrWhiteSpace(input))
         {
-            // throw new FormatException("A busy-time range is required.");
             return [];
         }
 
@@ -94,6 +93,33 @@ public static class BusyTimeParser
                 out var endTime))
         {
             throw new FormatException("The ending time is invalid.");
+        }
+
+        // Make sure both times are on whole-hour boundaries.
+        if (startTime.Minute != 0 || endTime.Minute != 0)
+        {
+            throw new FormatException(
+                "The starting and ending times must use whole hours."
+            );
+        }
+
+        // Make sure the ending time occurs after the starting time.
+        if (startTime >= endTime)
+        {
+            throw new FormatException(
+                "The ending time must occur after the starting time."
+            );
+        }
+
+        // Make sure the range is inside the allowed daily schedule.
+        var earliestTime = new TimeOnly(9, 0);
+        var latestTime = new TimeOnly(17, 0);
+
+        if (startTime < earliestTime || endTime > latestTime)
+        {
+            throw new FormatException(
+                "Busy times must be between 9:00 AM and 5:00 PM."
+            );
         }
 
         return new BusyTimeRange(day, startTime, endTime);
