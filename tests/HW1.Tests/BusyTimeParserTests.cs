@@ -48,16 +48,32 @@ public class BusyTimeParserTests
             }
         );
     }
+
     [Fact]
     public void Parse_EmptyInput_ReturnsNoRanges()
     {
-            // Arrange
-            const string input = "";
+        // Arrange
+        const string input = "";
 
-            // Act
-            var ranges = BusyTimeParser.Parse(input);
+        // Act
+        var ranges = BusyTimeParser.Parse(input);
 
-            // Assert
-            Assert.Empty(ranges);
+        // Assert
+        Assert.Empty(ranges);
+    }
+
+    [Theory]
+    [InlineData("Funday 9:00 AM - 11:00 AM")]
+    [InlineData("Monday 9:00 AM 11:00 AM")]
+    [InlineData("Monday 9:30 AM - 11:00 AM")]
+    [InlineData("Monday 11:00 AM - 9:00 AM")]
+    [InlineData("Monday 8:00 AM - 10:00 AM")]
+    [InlineData("Monday 4:00 PM - 6:00 PM")]
+    public void Parse_InvalidInput_ThrowsFormatException(string input)
+    {
+        // Act and Assert
+        Assert.Throws<FormatException>(
+            () => BusyTimeParser.Parse(input)
+        );
     }
 }
