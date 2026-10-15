@@ -9,8 +9,7 @@ public static class ScheduleCalculator
         IReadOnlyList<BusyTimeRange> busyTimes,
         bool includeWeekends)
     {
-        // Weekends will be added after the next unit test.
-        var days = new[]
+        var days = new List<DayOfWeek>
         {
             DayOfWeek.Monday,
             DayOfWeek.Tuesday,
@@ -18,6 +17,13 @@ public static class ScheduleCalculator
             DayOfWeek.Thursday,
             DayOfWeek.Friday
         };
+
+        // Weekends schedule for the weekends toggle.
+        if (includeWeekends)
+        {
+            days.Add(DayOfWeek.Saturday);
+            days.Add(DayOfWeek.Sunday);
+        }
 
         var schedule = new List<ScheduleSlot>();
 
