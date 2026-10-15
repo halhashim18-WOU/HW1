@@ -79,4 +79,59 @@ public class ScheduleCalculatorTests
                 slot.Day == DayOfWeek.Sunday
         );
     }
+
+    [Fact]
+    public void Calculate_WithWeekends_AddsWeekendSlotsAndMarksBusyTimes()
+    {
+        // Arrange
+        var busyTimes = new List<BusyTimeRange>
+        {
+            new(
+                DayOfWeek.Saturday,
+                new TimeOnly(10, 0),
+                new TimeOnly(12, 0)
+            )
+        };
+
+        // Act
+        var schedule = ScheduleCalculator.Calculate(
+            busyTimes,
+            includeWeekends: true
+        );
+
+        // Assert
+        Assert.Equal(56, schedule.Count);
+
+        Assert.Contains(
+            schedule,
+            slot =>
+                slot.Day == DayOfWeek.Saturday &&
+                slot.StartTime == new TimeOnly(10, 0) &&
+                slot.IsBusy
+        );
+
+        Assert.Contains(
+            schedule,
+            slot =>
+                slot.Day == DayOfWeek.Saturday &&
+                slot.StartTime == new TimeOnly(11, 0) &&
+                slot.IsBusy
+        );
+
+        Assert.Contains(
+            schedule,
+            slot =>
+                slot.Day == DayOfWeek.Saturday &&
+                slot.StartTime == new TimeOnly(12, 0) &&
+                !slot.IsBusy
+        );
+
+        Assert.Contains(
+            schedule,
+            slot =>
+                slot.Day == DayOfWeek.Sunday &&
+                slot.StartTime == new TimeOnly(9, 0) &&
+                !slot.IsBusy
+        );
+    }
 }
