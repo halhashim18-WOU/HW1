@@ -12,7 +12,7 @@
         </p>
     </div>
 
-    @*Post form for submitting busy times*@
+    @* Post form for submitting busy times. *@
     <form method="post">
         <div class="mb-3">
             <label asp-for="BusyTimes" class="form-label">
@@ -26,7 +26,8 @@
                       placeholder="Monday 9:00 AM - 11:00 AM; Wednesday 2:00 PM - 4:00 PM"></textarea>
 
             <div class="form-text">
-                Separate multiple busy-time ranges with semicolons.
+                Use full day names and whole-hour times between
+                9:00 AM and 5:00 PM. Separate ranges with semicolons.
             </div>
         </div>
 
@@ -44,15 +45,67 @@
         </button>
     </form>
 
-    @* Temp *@
-    @if (Model.WasSubmitted)
+    @* Displays a parsing or validation error without removing the form input. *@
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
     {
-        <div class="alert alert-info mt-4">
-            Form was submitted with the following values:
-            <ul>
-                <li>Busy times: @Model.BusyTimes</li>
-                <li>Include weekends: @Model.IncludeWeekends</li>
-            </ul>
+        <div class="alert alert-danger mt-4">
+            @Model.ErrorMessage
+        </div>
+    }
+    else if (Model.WasSubmitted)
+    {
+        var days = Model.Schedule
+            .Select(slot => slot.Day)
+            .Distinct()
+            .ToList();
+
+        var startTimes = Model.Schedule
+            .Select(slot => slot.StartTime)
+            .Distinct()
+            .ToList();
+
+        @* Displays the calculated schedule by day and hour. *@
+        <div class="table-responsive mt-4">
+            <table class="table table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th scope="col">Time</th>
+
+                        @foreach (var day in days)
+                        {
+                            <th scope="col">@day</th>
+                        }
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var startTime in startTimes)
+                    {
+                        var endTime = startTime.AddHours(1);
+
+                        <tr>
+                            <th scope="row">
+                                @startTime.ToString("h:mm tt")
+                                -
+                                @endTime.ToString("h:mm tt")
+                            </th>
+
+                            @foreach (var day in days)
+                            {
+                                var slot = Model.Schedule.Single(
+                                    scheduleSlot =>
+                                        scheduleSlot.Day == day &&
+                                        scheduleSlot.StartTime == startTime
+                                );
+
+                                <td>
+                                    @(slot.IsBusy ? "Busy" : "Free")
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     }
 </div>
