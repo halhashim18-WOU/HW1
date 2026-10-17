@@ -25,9 +25,23 @@
                       rows="5"
                       placeholder="Monday 9:00 AM - 11:00 AM; Wednesday 2:00 PM - 4:00 PM"></textarea>
 
+            @* Explains the required busy-time input format. *@
             <div class="form-text">
-                Use full day names and whole-hour times between
-                9:00 AM and 5:00 PM. Separate ranges with semicolons.
+                <div>
+                    <strong>Format:</strong>
+                    <code>Day h:mm AM - h:mm PM</code>
+                </div>
+
+                <div>
+                    <strong>Example:</strong>
+                    <code>Monday 9:00 AM - 11:00 AM; Wednesday 2:00 PM - 4:00 PM</code>
+                </div>
+
+                <div>
+                    Use full day names and whole-hour times between
+                    9:00 AM and 5:00 PM. Separate multiple ranges
+                    with semicolons.
+                </div>
             </div>
         </div>
 
@@ -98,8 +112,13 @@
                                         scheduleSlot.StartTime == startTime
                                 );
 
-                                <td>
-                                    @(slot.IsBusy ? "Busy" : "Free")
+                                @* Added colors to schedule.  *@
+                                <td class="@(slot.IsBusy
+                                    ? "table-danger"
+                                    : "table-success")">
+                                    <strong>
+                                        @(slot.IsBusy ? "Busy" : "Free")
+                                    </strong>
                                 </td>
                             }
                         </tr>
